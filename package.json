@@ -10,6 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "express": "^4.16.4",
+    "serve-index": "^1.9.1",
+    "ts-node": "^8.1.0",
     "typescript": "^3.4.3"
   }
 }
