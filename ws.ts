@@ -39,6 +39,15 @@ app.put('/users?/:id', (req, res) => {
     return res.status(204).end();
 });
 
+app.patch('/users?/:id', (req, res) => {
+    const id = +req.params.id;
+    if (!users.has(id)) {
+        return res.status(404).end();
+    }
+    users.set(id, { ...users.get(id), ...req.body, id });
+    return res.status(204).end();
+});
+
 app.delete('/users?', (req, res) => {
     users.clear();
     return res.status(204).end();
