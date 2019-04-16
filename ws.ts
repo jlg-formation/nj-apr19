@@ -48,6 +48,13 @@ app.patch('/users?/:id', (req, res) => {
     return res.status(204).end();
 });
 
+app.patch('/users?', (req, res) => {
+    users.forEach((v, k, map) => {
+        map.set(k, { ...map.get(k), ...req.body, id: k });
+    });
+    return res.status(204).end();
+});
+
 app.delete('/users?', (req, res) => {
     users.clear();
     return res.status(204).end();

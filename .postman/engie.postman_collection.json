@@ -1,0 +1,93 @@
+{
+	"variables": [],
+	"info": {
+		"name": "engie",
+		"_postman_id": "57437549-4bc0-7344-43e0-2df0142ec813",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "create user",
+			"request": {
+				"url": "http://localhost:9000/ws/users",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"lastname\": \"GUENEGO\",\n\t\"size\": 1.78,\n\t\"isAdmin\": false\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "retrieve all users",
+			"request": {
+				"url": "http://localhost:9000/ws/users",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete all users",
+			"request": {
+				"url": "http://localhost:9000/ws/users",
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Rewrite user",
+			"request": {
+				"url": "http://localhost:9000/ws/users/2",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"lastname\": \"GUENEGO\",\n    \"size\": 1.75,\n    \"id\": 3\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Upgrade user",
+			"request": {
+				"url": "http://localhost:9000/ws/users/1",
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"lastname\": \"GUENEGO\",\n    \"size\": 1.75,\n    \"id\": 56565656\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
