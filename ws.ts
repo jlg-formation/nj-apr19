@@ -3,12 +3,16 @@ const app = express.Router();
 export const ws = app;
 
 app.use(express.json());
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
 
 let privateId = 0;
 const generateId = (): number => privateId++;
 
 const users = new Map();
+
+app.use((req, res, next) => {
+    setTimeout(next, 5000);
+});
 
 
 app.get('/clock', (req, res) => res.json({ time: new Date() }));
