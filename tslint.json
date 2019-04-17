@@ -5,6 +5,7 @@
             true,
             "double"
         ],
-        "no-console": false
+        "no-console": false,
+        "arrow-parens": false
     }
 }
