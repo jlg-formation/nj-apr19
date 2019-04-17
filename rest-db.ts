@@ -1,7 +1,14 @@
 import * as express from 'express';
 import { DBConnection } from './db';
-import { InsertOneWriteOpResult } from 'mongodb';
+import { sleep } from './misc';
+import { ObjectId } from 'mongodb';
 const app = express.Router();
+
+const renameId = n => {
+    n.id = n._id;
+    delete n._id;
+    return n;
+};
 
 export class RestDB {
 
@@ -15,16 +22,22 @@ export class RestDB {
         app.post(baseURL, async (req, res) => {
             const result = await collection.insertOne({ ...req.body });
             const user = { ...req.body, id: result.insertedId };
+            await sleep(1000);
             return res.status(201).json(user);
         });
 
-        app.get(baseURL, (req, res) => res.json(Array.from(items.values())));
+        app.get(baseURL, async (req, res) => {
+            const array = await collection.find({}).toArray();
+            array.forEach(renameId);
+            return res.json(array);
+        });
 
-        app.get(baseURL + '/:id', (req, res) => {
-            if (!items.has(+req.params.id)) {
+        app.get(baseURL + '/:id', async (req, res) => {
+            const result = await collection.findOne({_id: new ObjectId(req.params.id)});
+            if (!result) {
                 return res.status(404).end();
             }
-            return res.json(items.get(+req.params.id));
+            return res.json(renameId(result));
         });
 
         app.put(baseURL + '/:id', (req, res) => {
