@@ -1,5 +1,6 @@
-import { port, app } from './express';
+import { listen } from './express';
 
-app.listen(port, () => console.log('Server started on port', port));
+listen();
+
 
 

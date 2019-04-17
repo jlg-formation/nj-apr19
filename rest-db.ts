@@ -13,7 +13,7 @@ export class RestDB {
 
         const baseURL = `/${r}s?`;
         app.post(baseURL, async (req, res) => {
-            const result: InsertOneWriteOpResult = await collection.insertOne({ ...req.body });
+            const result = await collection.insertOne({ ...req.body });
             const user = { ...req.body, id: result.insertedId };
             return res.status(201).json(user);
         });

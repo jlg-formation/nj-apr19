@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 import axios from 'axios';
-import { port, app } from '../express';
+import { port, listen } from '../express';
 
 
 const http = axios.create({
@@ -19,13 +19,9 @@ describe('REST', function () {
         lastName: 'Flintstone'
     };
     let user;
-    
 
-    it('should start the server', done => {
-        server = app.listen(port, () => {
-            console.log('Server started on port', port);
-            done();
-        });
+    it('should start the server', async () => {
+        server = await listen();
     });
 
     it('should delete all users', async () => {

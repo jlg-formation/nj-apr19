@@ -14,9 +14,9 @@ app.use((req, res, next) => {
 app.get('/clock', (req, res) => res.json({ time: new Date() }));
 
 const resources = ['user', 'bus'];
-(async () => {
+export const dbconnect = async () => {
     const rest = new RestDB();
     await rest.db.connect();
     resources.forEach(r => app.use(rest.expose(r)));
-})();
+}
 
