@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 import axios from 'axios';
-import { port, Server} from '../express';
+import { port, MyServer} from '../express';
 
 
 const http = axios.create({
@@ -10,7 +10,7 @@ const http = axios.create({
 describe('REST', function () {
     this.timeout(0);
 
-    let server = new Server();
+    let server = new MyServer();
     
     let id = 0;
 

@@ -1,2 +1,2 @@
-import { Server } from './express';
-new Server().start();
+import { MyServer } from './express';
+new MyServer().start();
