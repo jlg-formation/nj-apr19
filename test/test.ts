@@ -1,6 +1,6 @@
-import * as assert from 'assert';
-import axios from 'axios';
-import { MyServer, port} from '../express';
+import * as assert from "assert";
+import axios from "axios";
+import { MyServer, port} from "../express";
 
 const http = axios.create({
     baseURL: `http://localhost:${port}/ws/bus`,
@@ -15,7 +15,7 @@ describe("REST", function() {
 
     const obj = {
         firstName: "Fred",
-        lastName: "Flintstone"
+        lastName: "Flintstone",
     };
     let user;
 
