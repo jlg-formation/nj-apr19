@@ -1,7 +1,7 @@
 import * as express from 'express';
 import { DBConnection } from './db';
 import { sleep } from './misc';
-import { ObjectId } from 'mongodb';
+import { ObjectId, UpdateWriteOpResult } from 'mongodb';
 const app = express.Router();
 
 const renameId = n => {
@@ -33,20 +33,26 @@ export class RestDB {
         });
 
         app.get(baseURL + '/:id', async (req, res) => {
-            const result = await collection.findOne({_id: new ObjectId(req.params.id)});
+            const result = await collection.findOne({ _id: new ObjectId(req.params.id) });
             if (!result) {
                 return res.status(404).end();
             }
             return res.json(renameId(result));
         });
 
-        app.put(baseURL + '/:id', (req, res) => {
-            const id = +req.params.id;
-            if (!items.has(id)) {
+        app.put(baseURL + '/:id', async (req, res) => {
+
+            try {
+                const id = new ObjectId(req.params.id);
+                delete req.body.id;
+                const updateWriteOpResult: UpdateWriteOpResult = await collection.replaceOne({ _id: new ObjectId(req.params.id) }, req.body);
+                if (updateWriteOpResult.result.n === 0) {
+                    return res.status(404).end();
+                }
+                return res.status(204).end();
+            } catch (err) {
                 return res.status(404).end();
             }
-            items.set(id, { ...req.body, id });
-            return res.status(204).end();
         });
 
         app.patch(baseURL + '/:id', (req, res) => {
@@ -65,8 +71,8 @@ export class RestDB {
             return res.status(204).end();
         });
 
-        app.delete(baseURL, (req, res) => {
-            items.clear();
+        app.delete(baseURL, async (req, res) => {
+            const result = await collection.deleteMany({});
             return res.status(204).end();
         });
 
