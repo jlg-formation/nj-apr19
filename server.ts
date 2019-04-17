@@ -1,6 +1,7 @@
-import { listen } from './express';
+import { Server } from './express';
 
-listen();
+
+new Server().start();
 
 
 
