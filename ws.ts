@@ -1,5 +1,6 @@
 import * as express from 'express';
 import { RestDB } from './rest-db';
+import { Rest } from './rest';
 export const app = express.Router();
 export const ws = app;
 
@@ -14,9 +15,15 @@ app.use((req, res, next) => {
 app.get('/clock', (req, res) => res.json({ time: new Date() }));
 
 const resources = ['user', 'bus'];
+
+const rest = new RestDB();
+
 export const dbconnect = async () => {
-    const rest = new RestDB();
     await rest.db.connect();
     resources.forEach(r => app.use(rest.expose(r)));
+}
+
+export const dbdisconnect = async() => {
+    await rest.db.disconnect();
 }
 

@@ -18,6 +18,10 @@ export class DBConnection {
         }
 
     }
+
+    async disconnect() {
+        this.client.close();
+    }
 }
 
 

@@ -1,16 +1,16 @@
 import * as assert from 'assert';
 import axios from 'axios';
-import { port, listen } from '../express';
+import { port, Server } from '../express';
 
 
 const http = axios.create({
-    baseURL: `http://localhost:${port}/ws/users`,
+    baseURL: `http://localhost:${port}/ws/bus`,
 });
 
 describe('REST', function () {
     this.timeout(0);
 
-    let server;
+    let server = new Server();
     
     let id = 0;
 
@@ -21,7 +21,7 @@ describe('REST', function () {
     let user;
 
     it('should start the server', async () => {
-        server = await listen();
+        await server.start();
     });
 
     it('should delete all users', async () => {
@@ -47,8 +47,8 @@ describe('REST', function () {
         assert.deepStrictEqual(response.data, user);
     });
 
-    it('should stop the server', done => {
-        server.close(done);
+    it('should stop the server', async () => {
+        await server.stop();
     });
 
 
