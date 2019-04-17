@@ -1,6 +1,5 @@
-import * as express from 'express';
-import { RestDB } from './rest-db';
-import { Rest } from './rest';
+import * as express from "express";
+import { RestMongoose } from "./rest-mongoose";
 export const app = express.Router();
 export const ws = app;
 
@@ -11,19 +10,18 @@ app.use((req, res, next) => {
     setTimeout(next, 0);
 });
 
+app.get("/clock", (req, res) => res.json({ time: new Date() }));
 
-app.get('/clock', (req, res) => res.json({ time: new Date() }));
+const resources = ["user", "bus"];
 
-const resources = ['user', 'bus'];
-
-const rest = new RestDB();
+const rest = new RestMongoose();
 
 export const dbconnect = async () => {
     await rest.db.connect();
     resources.forEach(r => app.use(rest.expose(r)));
-}
+};
 
-export const dbdisconnect = async() => {
+export const dbdisconnect = async () => {
     await rest.db.disconnect();
-}
+};
 

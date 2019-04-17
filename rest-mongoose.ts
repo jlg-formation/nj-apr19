@@ -30,7 +30,7 @@ class DBConnection {
     }
 }
 
-export class RestDB {
+export class RestMongoose {
 
     db = new DBConnection();
 
