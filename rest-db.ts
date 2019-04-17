@@ -1,7 +1,6 @@
-import * as express from 'express';
-import { DBConnection } from './db';
-import { sleep } from './misc';
-import { ObjectId, UpdateWriteOpResult, DeleteWriteOpResultObject } from 'mongodb';
+import * as express from "express";
+import { Db, DeleteWriteOpResultObject, MongoClient, ObjectId, UpdateWriteOpResult } from "mongodb";
+import { sleep } from "./misc";
 const app = express.Router();
 
 const renameId = n => {
@@ -9,6 +8,28 @@ const renameId = n => {
     delete n._id;
     return n;
 };
+
+class DBConnection {
+    client: MongoClient;
+    database: Db;
+    async connect() {
+        try {
+            const c = await MongoClient.connect("mongodb://localhost:27017", { useNewUrlParser: true });
+
+            console.log("Connected successfully to MongoDB");
+            this.client = c;
+            this.database = c.db("NJ");
+        } catch (e) {
+            console.error(e.message);
+            process.exit(1);
+        }
+
+    }
+
+    async disconnect() {
+        this.client.close();
+    }
+}
 
 export class RestDB {
 
@@ -22,7 +43,6 @@ export class RestDB {
         app.post(baseURL, async (req, res) => {
             const result = await collection.insertOne({ ...req.body });
             const user = { ...req.body, id: result.insertedId };
-            await sleep(1000);
             return res.status(201).json(user);
         });
 
@@ -32,7 +52,7 @@ export class RestDB {
             return res.json(array);
         });
 
-        app.get(baseURL + '/:id', async (req, res) => {
+        app.get(baseURL + "/:id", async (req, res) => {
             const result = await collection.findOne({ _id: new ObjectId(req.params.id) });
             if (!result) {
                 return res.status(404).end();
@@ -40,12 +60,13 @@ export class RestDB {
             return res.json(renameId(result));
         });
 
-        app.put(baseURL + '/:id', async (req, res) => {
+        app.put(baseURL + "/:id", async (req, res) => {
 
             try {
                 const id = new ObjectId(req.params.id);
                 delete req.body.id;
-                const updateWriteOpResult: UpdateWriteOpResult = await collection.replaceOne({ _id: new ObjectId(req.params.id) }, req.body);
+                const updateWriteOpResult: UpdateWriteOpResult =
+                    await collection.replaceOne({ _id: new ObjectId(req.params.id) }, req.body);
                 if (updateWriteOpResult.result.n === 0) {
                     return res.status(404).end();
                 }
@@ -55,11 +76,12 @@ export class RestDB {
             }
         });
 
-        app.patch(baseURL + '/:id', async (req, res) => {
+        app.patch(baseURL + "/:id", async (req, res) => {
             try {
                 const id = new ObjectId(req.params.id);
                 delete req.body.id;
-                const updateWriteOpResult: UpdateWriteOpResult = await collection.updateOne({ _id: new ObjectId(req.params.id) }, { $set: req.body });
+                const updateWriteOpResult: UpdateWriteOpResult =
+                    await collection.updateOne({ _id: new ObjectId(req.params.id) }, { $set: req.body });
                 if (updateWriteOpResult.result.n === 0) {
                     return res.status(404).end();
                 }
@@ -83,7 +105,7 @@ export class RestDB {
             return res.status(204).end();
         });
 
-        app.delete(baseURL + '/:id', async (req, res) => {
+        app.delete(baseURL + "/:id", async (req, res) => {
             try {
                 const id = new ObjectId(req.params.id);
                 const result: DeleteWriteOpResultObject = await collection.deleteOne({ _id: id });

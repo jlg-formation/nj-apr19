@@ -5,8 +5,14 @@ import * as serveIndex from "serve-index";
 import { dbconnect, dbdisconnect, ws } from "./ws";
 
 export const port = 3000;
-
 export const app = express();
+
+const listenPromise = (port: number): Promise<http.Server> => new Promise(resolve => {
+    const server = http.createServer(app);
+    server.listen(port, () => {
+        resolve(server);
+    });
+});
 
 app.use("/ws", ws);
 app.use(express.static("www"));
@@ -16,7 +22,8 @@ export class MyServer {
     public httpServer: http.Server;
     public async start() {
         await dbconnect();
-        this.httpServer = app.listen(port, () => console.log("Server started on port", port));
+        this.httpServer = await listenPromise(port);
+        console.log("Server started on port", port);
     }
 
     public async stop() {
