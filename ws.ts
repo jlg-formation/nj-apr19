@@ -15,7 +15,7 @@ app.get("/clock", (req, res) => res.json({ time: new Date() }));
 
 const resources = ["user", "bus"];
 
-const rest = new RestDB();
+const rest = new RestMongoose();
 
 export const dbconnect = async () => {
     await rest.db.connect();
