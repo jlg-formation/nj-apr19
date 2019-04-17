@@ -1,7 +1,7 @@
 import * as express from 'express';
 import { DBConnection } from './db';
 import { sleep } from './misc';
-import { ObjectId, UpdateWriteOpResult } from 'mongodb';
+import { ObjectId, UpdateWriteOpResult, DeleteWriteOpResultObject } from 'mongodb';
 const app = express.Router();
 
 const renameId = n => {
@@ -55,20 +55,27 @@ export class RestDB {
             }
         });
 
-        app.patch(baseURL + '/:id', (req, res) => {
-            const id = +req.params.id;
-            if (!items.has(id)) {
+        app.patch(baseURL + '/:id', async (req, res) => {
+            try {
+                const id = new ObjectId(req.params.id);
+                delete req.body.id;
+                const updateWriteOpResult: UpdateWriteOpResult = await collection.updateOne({ _id: new ObjectId(req.params.id) }, { $set: req.body });
+                if (updateWriteOpResult.result.n === 0) {
+                    return res.status(404).end();
+                }
+                return res.status(204).end();
+            } catch (err) {
                 return res.status(404).end();
             }
-            items.set(id, { ...items.get(id), ...req.body, id });
-            return res.status(204).end();
         });
 
-        app.patch(baseURL + '/:id', (req, res) => {
-            items.forEach((v, k, map) => {
-                map.set(k, { ...map.get(k), ...req.body, id: k });
-            });
-            return res.status(204).end();
+        app.patch(baseURL, async (req, res) => {
+            try {
+                await collection.updateMany({}, { $set: req.body });
+                return res.status(204).end();
+            } catch (err) {
+                return res.status(404).end();
+            }
         });
 
         app.delete(baseURL, async (req, res) => {
@@ -76,12 +83,17 @@ export class RestDB {
             return res.status(204).end();
         });
 
-        app.delete(baseURL + '/:id', (req, res) => {
-            if (!items.has(+req.params.id)) {
+        app.delete(baseURL + '/:id', async (req, res) => {
+            try {
+                const id = new ObjectId(req.params.id);
+                const result: DeleteWriteOpResultObject = await collection.deleteOne({ _id: id });
+                if (result.result.n === 0) {
+                    return res.status(404).end();
+                }
+                return res.status(204).end();
+            } catch (err) {
                 return res.status(404).end();
             }
-            items.delete(+req.params.id);
-            return res.status(204).end();
         });
         return app;
     }

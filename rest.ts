@@ -45,7 +45,7 @@ export class Rest {
             return res.status(204).end();
         });
         
-        app.patch(baseURL + '/:id', (req, res) => {
+        app.patch(baseURL, (req, res) => {
             items.forEach((v, k, map) => {
                 map.set(k, { ...map.get(k), ...req.body, id: k });
             });
