@@ -1,5 +1,6 @@
 import * as express from "express";
 import { RestMongoose } from "./rest-mongoose";
+import { RestDB } from "./rest-db";
 export const app = express.Router();
 export const ws = app;
 
@@ -14,7 +15,7 @@ app.get("/clock", (req, res) => res.json({ time: new Date() }));
 
 const resources = ["user", "bus"];
 
-const rest = new RestMongoose();
+const rest = new RestDB();
 
 export const dbconnect = async () => {
     await rest.db.connect();

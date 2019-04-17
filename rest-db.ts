@@ -52,11 +52,15 @@ export class RestDB {
         });
 
         app.get(baseURL + "/:id", async (req, res) => {
-            const result = await collection.findOne({ _id: new ObjectId(req.params.id) });
-            if (!result) {
+            try {
+                const result = await collection.findOne({ _id: new ObjectId(req.params.id) });
+                if (!result) {
+                    return res.status(404).end();
+                }
+                return res.json(renameId(result));
+            } catch (err) {
                 return res.status(404).end();
             }
-            return res.json(renameId(result));
         });
 
         app.put(baseURL + "/:id", async (req, res) => {
